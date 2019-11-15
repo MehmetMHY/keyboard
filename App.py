@@ -5,6 +5,7 @@ import KeyHelper
 from listeners import KeyRecord
 from listeners import OctaveSetter
 
+# TODO add keys/speakers
 # Set keys
 keys = []
 speakers = []
@@ -17,7 +18,7 @@ keyHelper = KeyHelper.KeyHelper(keys)
 # Initialize keyboard and add its listeners
 keyboard = Keyboard.Keyboard(keys, speakers)
 keyboard.addListener(OctaveSetter.OctaveSetter())
-keyboard.addListener(recorder)
+keyboard.addListener(recorder, Keyboard.Listener.Order.LAST)
 
 # Play and record keyboard
 keyboard.play()

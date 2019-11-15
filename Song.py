@@ -1,19 +1,28 @@
 from enum import Enum
 import matplotlib.pyplot as plt
 
+#TODO add comments
+
 class Song:
 
-    def __init__(self):
-        self.notes = [[], []]
+    def __init__(self, song = None):
+        self.notes = [[], []] if song is None else song.notes
 
-    def __init__(self, song):
-        self.notes = song.notes
-
-    def addNote(self, note, duration):
+    def addNotes(self, notes, duration):
         absDuration = duration if len(self.notes) == 0 else self.notes[len(self.notes) - 1][1] + duration
-        self.notes[0].append(note)
-        self.notes[1].append(absDuration)
+        for note in notes:
+            self.notes[0].append(note)
+            self.notes[1].append(absDuration)
 
+    #TODO optimize notes
+    def optimize(self):
+        
+        for i in range(1, len(self.notes[1])):
+            if(not (self.notes[1][i] == self.notes[1][i-1])):
+                continue
+            self
+
+    #TODO finish adding display
     def display(self, name):
         plt.figure(figsize=(15, 5))
 
@@ -21,6 +30,10 @@ class Song:
         # plt.title("Song" if len(name) == 0 else name)
 
         plt.show()
+
+    #TODO add ability to write to file
+    def write(self, file):
+        return
 
 
 class Note:
