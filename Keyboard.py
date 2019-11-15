@@ -3,7 +3,6 @@ import time
 import pigpio
 import threading
 import time
-from enum import Enum
 
 # The keyboard class (the REAL meat and potatoes of this shi*)
 class Keyboard:
@@ -51,7 +50,7 @@ class Keyboard:
             for i in range(len(keyboardData.pressedKeys)):
                 self.keyboard.pig.hardwar_PWM(
                     keyboardData.speakers[i].getPin(),
-                    keyboardData.pressedKeys[i].getFrequency(),
+                    keyboardData.pressedKeys[i].getNote().getFrequency(),
                     int(0.25e6)
                 )
 
@@ -111,55 +110,20 @@ class Listener:
     def onStopEvent(self, keyboardData):
         return
 
-# Notes enum
-# Map of note and corresponding half-step movement
-class Note(Enum):
-    D = -7
-    D_sharp = -6
-    E = -5
-    F = -4
-    F_sharp = -3
-    G = -2
-    G_sharp = -1
-    A = 0
-    A_sharp = 1
-    B = 2
-
-# Octaves enum
-# Map of octave and corresponding A frequency
-class Octave(Enum):
-    ZERO = 27.50
-    ONE = 55.00
-    TWO = 110.00
-    THREE = 220.00
-    FOUR = 440.00
-    FIVE = 880.00
-    SIX = 1760.00
-    SEVEN = 3520.00
-    EIGHT = 7040.00
-
 # Key class
 class Key:
     # Initialize key class with pin, note, and octave
-    def __init(self, pin, note, octave):
+    def __init(self, pin, note):
         self.pin = pin
-        self.octave = octave
         self.note = note
 
     # Set octave
-    def setOctave(self, octave):
-        self.octave = octave
-
-    # Set note
     def setNote(self, note):
         self.note = note
 
-    # Get frequency using fn = f0 * (a)^n
-    #   fn = frequency
-    #   a = 2^1/12
-    #   n = half-step movement from a
-    def getFrequency(self):
-        return self.octave*(2**(1/12))**self.note
+    # Set note
+    def getNote(self):
+        return self.note
 
     # Check if key is pressed
     def isPressed(self):
