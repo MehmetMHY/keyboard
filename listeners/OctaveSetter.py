@@ -39,5 +39,5 @@ class OctaveSetter(Keyboard.Listener):
 
         for key in keyboardData.pressedKeys:
             note = key.getNote()
-            note.getOctave(self.octave)
+            note.setOctave(self.octave)
             key.setNote(note)

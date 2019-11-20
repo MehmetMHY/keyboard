@@ -3,6 +3,7 @@ import time
 import pigpio
 import threading
 import time
+import Song
 from enum import Enum
 
 
@@ -56,6 +57,14 @@ class Keyboard:
         def play(self):
             # Create copy of keyboard data to prevent asynchronous change threading issues
             keyboardData = self.keyboard.data
+            
+            # Loop through all pressed keys and stop playing
+            for i in range(len(keyboardData.pressedKeys)):
+                self.keyboard.pig.hardware_PWM(
+                    keyboardData.speakers[i].getPin(),
+                    0,
+                    0
+                )
             keyboardData.pressedKeys.clear()
 
             # Loop through all keys in keyboard data and check which are pressed
@@ -74,7 +83,7 @@ class Keyboard:
             for i in range(len(keyboardData.pressedKeys)):
                 self.keyboard.pig.hardware_PWM(
                     keyboardData.speakers[i].getPin(),
-                    keyboardData.pressedKeys[i].getNote().getFrequency(),
+                    int(keyboardData.pressedKeys[i].getNote().getFrequency()),
                     int(0.25e6)
                 )
 
@@ -91,7 +100,7 @@ class Keyboard:
             self.pressedKeys = []
 
     # Initialize keyboard class
-    def __init__(self, keys, speakers, updateDuration = 0.01):
+    def __init__(self, keys, speakers, updateDuration = 0.1):
         self.data = Keyboard.__Data(keys, speakers, updateDuration)
 
         self.isPlaying = False
@@ -131,7 +140,7 @@ class Keyboard:
 # Key class
 class Key:
     # Initialize key class with pin, note, and octave
-    def __init(self, pin, note):
+    def __init__(self, pin, note):
         self.pin = pin
         self.note = note
 
@@ -147,7 +156,7 @@ class Key:
     def isPressed(self):
         GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
         isPressed = GPIO.input(self.pin) == 1
-        GPIO.clear(self.pin)
+        GPIO.cleanup(self.pin)
         return isPressed
 
 # Speaker class
