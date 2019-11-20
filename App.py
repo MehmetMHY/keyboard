@@ -21,7 +21,7 @@ keys = [
     Keyboard.Key(16, Song.Note(Song.Position.B, Song.Octave.THREE)),
     Keyboard.Key(13, Song.Note(Song.Position.C, Song.Octave.THREE)),
     Keyboard.Key(6, Song.Note(Song.Position.C_SHARP, Song.Octave.THREE)),
-    Keyboard.Key(5, Song.Note(Song.Position.D2, Song.Octave.FOUR))
+    Keyboard.Key(5, Song.Note(Song.Position.D2, Song.Octave.THREE))
 ]
 speakers = [
     Keyboard.Speaker(12),
