@@ -19,8 +19,9 @@ class OctaveSetter(Keyboard.Listener):
     def __calcOctave(self):
         numOct = int(float(adc.readADC(self.channel)/3.3)*8.5)
         for octave in Song.Octave:
-            if(numOct == octave["num"]):
-                return octave
+            #if(numOct == octave["num"]):
+             #   return octave
+            print(octave["name"])
         return None
 
     def onPlayEvent(self, keyboardData):

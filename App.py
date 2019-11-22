@@ -41,15 +41,13 @@ keyboard.addListener(recorder, Keyboard.Listener.Order.LAST)
 
 # Play and record keyboard
 keyboard.play()
-time.sleep(3)
 recorder.record()
-time.sleep(50)
+time.sleep(3)
 recorder.stop()
-time.sleep(2)
 keyboard.stop()
 
 # Playback recorded song
-#playback.play(recorder.getSong())
+playback.play(recorder.getSong())
 
 #time.sleep(2)
 

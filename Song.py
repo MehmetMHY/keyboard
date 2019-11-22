@@ -60,10 +60,10 @@ class Song:
         for note in self.notes:
             if (type(note) is list):
                 for rN in note:
-                    if (rN.getOctave()["num"] < lowestOctave.getOctave()["num"]):
+                    if (rN.getOctave().num < lowestOctave.getOctave().num):
                         lowestOctave = rN
                 continue
-            if(note["num"].getOctave() < lowestOctave.getOctave()["num"]):
+            if(note.getOctave().num < lowestOctave.getOctave().num):
                 lowestOctave = note
         return lowestNote
 
@@ -72,11 +72,11 @@ class Song:
         if(type(note) is list):
             cord = "<"
             for rN in note:
-                cord += rN.getPosition()["name"] + ("'" * (rN.getOctave()["num"] - lowestOctave.getOctave()["num"])) + " "
+                cord += rN.getPosition().name + ("'" * (rN.getOctave().num - lowestOctave.getOctave().num)) + " "
             cord += ">"
             return cord
 
-        return note.getPosition()["name"] + ("'" * (note.getOctave()["num"] - lowestOctave.getOctave()["num"]))
+        return note.getPosition().name + ("'" * (note.getOctave().num - lowestOctave.getOctave().num))
 
     def __generateDurations(self, time):
         durations = []
@@ -135,100 +135,54 @@ class Note:
         return self.octave
 
     def getFrequency(self):
-        return self.octave["frequency"]*(2**(1/12))**self.position["halfsteps"]
+        return self.octave.frequency*(2**(1/12))**self.position.halfsteps
 
 # Notes enum
 # Map of note and corresponding half-step movement
 class Position(Enum):
-    D = {
-        "halfsteps": -7,
-        "name": "d"
-    }
-    D_SHARP = {
-        "halfsteps": -6,
-        "name": "ds"
-    }
-    E = {
-        "halfsteps": -5,
-        "name": "e"
-    }
-    F = {
-        "halfsteps": -4,
-        "name": "f"
-    }
-    F_SHARP = {
-        "halfsteps": -3,
-        "name": "fs"
-    }
-    G = {
-        "halfsteps": -2,
-        "name": "g"
-    }
-    G_SHARP = {
-        "halfsteps": -1,
-        "name": "gs"
-    }
-    A = {
-        "halfsteps": 0,
-        "name": "a'"
-    }
-    A_SHARP = {
-        "halfsteps": 1,
-        "name": "as'"
-    }
-    B = {
-        "halfsteps": 2,
-        "name": "b'"
-    }
-    C = {
-        "halfsteps": 3,
-        "name": "c'"
-    }
-    C_SHARP = {
-        "halfsteps": 4,
-        "name": "cs'"
-    }
-    D2 = {
-        "halfsteps": 5,
-        "name": "d'"
-    }
+    
+    def __new__(cls, *args, **kwds):
+        obj = object.__new__(cls)
+        obj._value_ = args[0]
+        return obj
+    
+    def __init__(self, halfsteps, name):
+        self.halfsteps = halfsteps
+        self.name = name
+    
+    D = -7, "d"
+    D_SHARP = -6, "ds"
+    E = -5, "e"
+    F = -4, "f"
+    F_SHARP = -3, "fs"
+    G = -2, "g"
+    G_SHARP = -1, "gs"
+    A = 0, "a'"
+    A_SHARP = 1, "as'"
+    B = 2, "b'"
+    C = 3, "c'"
+    C_SHARP = 4, "cs'"
+    D2 = 5, "d'"
 
 # Octaves enum
 # Map of octave and corresponding A frequency
 class Octave(Enum):
-    ZERO = {
-        "frequency": 27.50,
-        "num": 0
-    }
-    ONE = {
-        "frequency": 55.00,
-        "num": 1
-    }
-    TWO = {
-        "frequency": 110.00,
-        "num": 2
-    }
-    THREE = {
-        "frequency": 220.00,
-        "num": 3
-    }
-    FOUR = {
-        "frequency": 440.00,
-        "num": 4
-    }
-    FIVE = {
-        "frequency": 880.00,
-        "num": 5
-    }
-    SIX = {
-        "frequency": 1760.00,
-        "num": 6
-    }
-    SEVEN = {
-        "frequency": 3520.00,
-        "num": 7
-    }
-    EIGHT = {
-        "frequency": 7040.00,
-        "num": 8
-    }
+    
+    def __new__(cls, *args, **kwds):
+        obj = object.__new__(cls)
+        obj._value_ = args[0]
+        return obj
+    
+    def __init__(self, frequency, num):
+        self.frequency = frequency
+        self.num = num
+    
+    ZERO = 27.50, 0
+    ONE = 55.00, 1
+    TWO = 110.00, 2
+    THREE = 220.00, 3
+    FOUR = 440.00, 4
+    FIVE = 880.00, 5
+    SIX = 1760.00, 6
+    SEVEN = 3520.00, 7
+    EIGHT = 7040.00, 8
