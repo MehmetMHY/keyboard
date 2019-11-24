@@ -53,3 +53,5 @@ cd $pdfLocation
 qpdfview $FILENAME -geometry $COLx$ROW-$X+$Y
 
 clear ; clear ; clear
+
+#kill $$
