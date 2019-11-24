@@ -34,9 +34,12 @@ class Keyboard:
             threading.Thread.__init__(self)
             self.keyboard = keyboard
             self.pause = updateDuration
+            self.isLiving = False
 
         # Run method that plays notes on a loop while keyboard is playing (overroad from threading.Thread)
         def run(self):
+            self.isLiving = True
+            
             # Calls start event
             keyboardData = self.keyboard.data
             for oList in self.keyboard.listeners.copy():
@@ -57,6 +60,8 @@ class Keyboard:
             for oList in self.keyboard.listeners.copy():
                 for l in oList:
                     l.onStopEvent(keyboardData)
+            
+            self.isLiving = False
 
         # play notes
         def play(self):
@@ -121,7 +126,7 @@ class Keyboard:
     def play(self):
         self.isPlaying = True
 
-        if (not self.playThread.isAlive()):
+        if (not self.playThread.isLiving):
             self.playThread.start()
 
     # Tell play thread to STOP

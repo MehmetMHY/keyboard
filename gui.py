@@ -3,6 +3,7 @@ from enum import Enum
 import tkinter as tk 
 import os
 
+dimensions = "335x615"
 bgColor = "white"
 bgButton = "ghost white"
 
@@ -19,18 +20,24 @@ def optionMenuValue(selection):
 	global playSong
 	playSong = str(selection)
 
+def stopRecording():
+    musicFileNames.append(entry.get() + ".song")
+    for listener in listeners:
+        listener.onStopEvent()
+
 def sendIt():
 	for listener in listeners:
-		listener.onSubmitEvent(
-			{
-				1: Mode.FREEPLAY,
-				2: Mode.RECORD,
-				3: Mode.PLAYBACK
-			}[currentMode],
-			str(entry.get()),
-			str(playSong)
-		)
-	print(str(currentMode) + "/" + str(entry.get()) + "/" + str(playSong))
+            listener.onSubmitEvent(
+		{
+                    0: None,
+                    1: Mode.FREEPLAY,
+                    2: Mode.RECORD,
+                    3: Mode.PLAYBACK,
+                    4: Mode.MUTE
+		}[currentMode],
+		str(entry.get()),
+		str(playSong)
+            )
 
 def addListener(listener):
 	listeners.append(listener)
@@ -51,16 +58,17 @@ def getDirNames():
 		if(cv[i][-5:] == fileType):
 			musicFileNames.append(cv[i])
 
+def start():
+    root.mainloop()
+
 class Mode(Enum): 
     FREEPLAY = 1,
     RECORD = 2,
-    PLAYBACK = 3
+    PLAYBACK = 3,
+    MUTE = 4
 
 root = Tk() 
 v = IntVar()
-
-imgicon = PhotoImage(file=os.path.join(sp, 'favicon.ico'))
-root.tk.call('wm', 'iconphoto', root._w, imgicon)
 
 musicFileNames = []
 currentMode = 0
@@ -69,7 +77,7 @@ playSong = ""
 root.title('RaspPI Keyboard')
 root.configure(background=bgColor)
 root.resizable(width=False, height=False)
-root.geometry("335x550")
+root.geometry(dimensions)
 
 photo = PhotoImage(file = r"GUI_Icon.png") 
 Button(root, image = photo, highlightbackground=bgColor).pack(side = TOP) 
@@ -79,9 +87,10 @@ submit = tk.Button(root, text='README', bg=bgButton, width=25, command=openREADM
 
 modeLabel = Label(root, text='Modes', bg='gold').pack(fill=tk.BOTH)
 
-Radiobutton(root, text='Free-Play	', bg=bgColor, variable=v, value=1, command=hitButton, highlightbackground=bgColor).pack(anchor=W) 
-Radiobutton(root, text='Record	', bg=bgColor, variable=v, value=2, command=hitButton, highlightbackground=bgColor).pack(anchor=W) 
-Radiobutton(root, text='Play-Back	', bg=bgColor, variable=v, value=3, command=hitButton, highlightbackground=bgColor).pack(anchor=W)
+Radiobutton(root, text='Free-Play', bg=bgColor, variable=v, value=1, command=hitButton, highlightbackground=bgColor).pack(anchor=W) 
+Radiobutton(root, text='Record', bg=bgColor, variable=v, value=2, command=hitButton, highlightbackground=bgColor).pack(anchor=W) 
+Radiobutton(root, text='Play-Back', bg=bgColor, variable=v, value=3, command=hitButton, highlightbackground=bgColor).pack(anchor=W)
+Radiobutton(root, text='Mute', bg=bgColor, variable=v, value=4, command=hitButton, highlightbackground=bgColor).pack(anchor=W)
 
 modeTwoLabel = Label(root, text='Record Name', bg='lightblue').pack(fill=tk.BOTH)
 entry = Entry(root)
@@ -101,11 +110,11 @@ w = OptionMenu(root, variable, *musicFileNames, command=optionMenuValue)
 w.pack()
 w.config(bg=bgButton, highlightbackground=bgColor)
 
-
 modeThreeLabel = Label(root, text='Send It', bg='lightgreen').pack(fill=tk.BOTH)
 submit = tk.Button(root, text='Submit', width=25, command=sendIt, highlightbackground=bgColor, bg=bgButton).pack()
 
-leaveLabel = Label(root, text='Close', bg='red').pack(fill=tk.BOTH)
-exit = tk.Button(root, text='Exit', width=25, command=root.destroy, highlightbackground=bgColor, bg=bgButton).pack() 
+stopLabel = Label(root, text='Stop Recording', bg='orange red').pack(fill=tk.BOTH)
+stopRC = tk.Button(root, text='Stop', width=25, command=stopRecording, highlightbackground=bgColor, bg=bgButton).pack()
 
-root.mainloop()
+leaveLabel = Label(root, text='Close Program', bg='red').pack(fill=tk.BOTH)
+exit = tk.Button(root, text='Exit', width=25, command=root.destroy, highlightbackground=bgColor, bg=bgButton).pack() 

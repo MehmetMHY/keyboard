@@ -9,7 +9,7 @@ def load(fileName):
         if( not os.path.exists("SONGS")):
             raise IOError("File not found")
         
-        file = open("SONGS/" + fileName + ".song", "r")
+        file = open("SONGS/" + fileName, "r")
         lines = file.readlines()
         
         if(not lines[0] == "Lilypond Music\n"):
