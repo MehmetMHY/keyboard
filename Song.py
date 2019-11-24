@@ -3,12 +3,38 @@ from threading import Thread
 import numpy as np
 import pb
 import sys
+import ast
+import os
+
+def load(fileName):
+        if( not os.path.exists("SONGS")):
+            raise IOError("File not found")
+        
+        file = open("SONGS/" + fileName + ".song", "r")
+        lines = file.readlines()
+        
+        if(not lines[0] == "Lilypond Music\n"):
+            raise IOError(fileName + " is not a lilypond music file")
+        
+        file.close()
+        
+        notes = []
+        for noteList in lines[1][1:-2].split("-"):
+            for note in noteList[1:-1].split("_"):
+                print(note)
+            print("############")
+        
+        durations = []
+        for duration in lines[2][1:-1].split(", "):
+            durations.append(float(duration))
+        
+        return Song(notes, durations)
 
 class Song:
 
-    def __init__(self, song = None):
-        self.notes = [] if song == None else song.getNotes()
-        self.durations = [] if song == None else song.getDurations()
+    def __init__(self, notes = None, durations = None):
+        self.notes = [] if notes == None else notes
+        self.durations = [] if durations == None else durations
         self.sheetmusic = None
         
     def addNotes(self, note, duration):
@@ -16,9 +42,36 @@ class Song:
         self.durations.append(duration)
 
     def save(self, name="song"):
-        saveThread = Thread(target = pb.runLilyPond, args = (self.getSheetMusic(), name))
-        saveThread.start()
-
+        self.__saveSong__(name)
+        # self.__saveLily__(name)
+        
+    
+    def __saveSong__(self, name):
+        if( not os.path.exists("SONGS")):
+            os.makedirs("SONGS")
+        f = open("SONGS/" + name + ".song", "w")
+        f.write("Lilypond Music\n")
+        
+        notes = "["
+        for noteList in self.notes:
+            notes += "["
+            if (type(noteList) is list):
+                for note in noteList:
+                    notes += str(note) + "_"
+            else:
+                notes += str(note) + "_"
+            notes = notes[:-1]
+            notes += "]-"
+        notes = notes[:-1]
+        notes += "]"
+        
+        f.write(notes + "\n")
+        f.write(str(self.durations))
+        f.close()
+    
+    def __saveLily__(self, name):
+        Thread(target = pb.runLilyPond, args = (self.getSheetMusic(), name)).start()
+    
     def optimize(self):
         i = 0
         while(True):
@@ -42,7 +95,7 @@ class Song:
             self.updateSheetMusic(accuracy)
         return self.sheetmusic
     
-    def updateSheetMusic(self, accuracy = 0.05):
+    def updateSheetMusic(self, accuracy = 0.2):
         self.sheetmusic = self.__generateSheetMusic(accuracy)
     
     def __generateSheetMusic(self, accuracy):
@@ -144,6 +197,12 @@ class Note:
 
     def getFrequency(self):
         return self.octave.frequency*(2**(1/12))**self.position.halfsteps
+    
+    def toString(self):
+        return self.__str__()
+    
+    def __str__(self):
+        return "[" + self.position.name + ", " + str(self.octave.num) + "]"
 
 # Notes enum
 # Map of note and corresponding half-step movement
