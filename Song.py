@@ -3,7 +3,6 @@ from threading import Thread
 import numpy as np
 import pb
 import sys
-import ast
 import os
 
 def load(fileName):
@@ -20,9 +19,24 @@ def load(fileName):
         
         notes = []
         for noteList in lines[1][1:-2].split("-"):
-            for note in noteList[1:-1].split("_"):
-                print(note)
-            print("############")
+            cord = []
+            for rawCord in noteList[1:-1].split("_"):
+                if(rawCord == ''):
+                    continue
+                
+                raw = rawCord[1:-1].split(", ")
+                position = None
+                for p in Position:
+                    if(p.name == raw[0]):
+                        position = p
+                        break
+                octave = None
+                for o in Octave:
+                    if(o.num == int(raw[1])):
+                        octave = o
+                        break
+                cord.append(Note(position, octave))
+            notes.append(cord)
         
         durations = []
         for duration in lines[2][1:-1].split(", "):
@@ -43,7 +57,7 @@ class Song:
 
     def save(self, name="song"):
         self.__saveSong__(name)
-        # self.__saveLily__(name)
+        self.__saveLily__(name)
         
     
     def __saveSong__(self, name):
