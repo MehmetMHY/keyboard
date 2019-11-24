@@ -1,20 +1,23 @@
 from enum import Enum
+from threading import Thread
+import numpy as np
 import pb
 import sys
 
 class Song:
 
     def __init__(self, song = None):
-        self.notes = []
-        self.durations = []
+        self.notes = [] if song == None else song.getNotes()
+        self.durations = [] if song == None else song.getDurations()
         self.sheetmusic = None
         
-    def addNotes(self, notes, duration):
-        self.notes.append(notes)
+    def addNotes(self, note, duration):
+        self.notes.append(note)
         self.durations.append(duration)
 
-    def save(self, name):
-        pb.runLilyPond(self.getSheetMusic(), fileName=name)
+    def save(self, name="song"):
+        saveThread = Thread(target = pb.runLilyPond, args = (self.getSheetMusic(), name))
+        saveThread.start()
 
     def optimize(self):
         i = 0
@@ -28,14 +31,20 @@ class Song:
             del self.notes[i]
             del self.durations[i]
             
+    def getNotes(self):
+        return self.notes
+    
+    def getDurations(self):
+        return self.durations
+    
     def getSheetMusic(self, accuracy = 0.2):
         if(self.sheetmusic == None):
             self.updateSheetMusic(accuracy)
         return self.sheetmusic
-        
-    def updateSheetMusic(self, accuracy = 0.2):
+    
+    def updateSheetMusic(self, accuracy = 0.05):
         self.sheetmusic = self.__generateSheetMusic(accuracy)
-        
+    
     def __generateSheetMusic(self, accuracy):
         self.optimize()
 
@@ -51,32 +60,31 @@ class Song:
             note = self.__generateCord(self.notes[i], lowestOctave)
             durations = self.__generateDurations(durs[i])
             for dur in durations:
-                sheetmusic += note + dur + " "
-
+                sheetmusic += note + str(dur) + " "
+                
         return sheetmusic
 
     def __findLowestOctave(self):
-        lowestNote = Octave.EIGHT
+        lowestOctave = Octave.EIGHT
         for note in self.notes:
             if (type(note) is list):
                 for rN in note:
-                    if (rN.getOctave().num < lowestOctave.getOctave().num):
-                        lowestOctave = rN
-                continue
-            if(note.getOctave().num < lowestOctave.getOctave().num):
-                lowestOctave = note
-        return lowestNote
+                    if (rN.getOctave().num < lowestOctave.num):
+                        lowestOctave = rN.getOctave()
+            elif(note.getOctave().num < lowestOctave.num):
+                lowestOctave = note.getOctave()
+        return lowestOctave
 
     def __generateCord(self, note, lowestOctave):
-
-        if(type(note) is list):
-            cord = "<"
-            for rN in note:
-                cord += rN.getPosition().name + ("'" * (rN.getOctave().num - lowestOctave.getOctave().num)) + " "
-            cord += ">"
-            return cord
-
-        return note.getPosition().name + ("'" * (note.getOctave().num - lowestOctave.getOctave().num))
+        if(not (type(note) is list)):
+            return note.getPosition().name + ("'" * (note.getOctave().num + 1 - lowestOctave.num))
+        if(len(note) == 0):
+            return "r"
+        cord = "<"
+        for rN in note:
+            cord += rN.getPosition().name + ("'" * (rN.getOctave().num + 1 - lowestOctave.num)) + " "
+        cord += ">"
+        return cord
 
     def __generateDurations(self, time):
         durations = []
@@ -97,7 +105,7 @@ class Song:
 
     def __approximate(self, vals, accuracy):
         i = 0
-        shortestVal = sys.maxint
+        shortestVal = sys.maxsize
         while (True):
             if (len(vals) <= i):
                 break
@@ -109,7 +117,7 @@ class Song:
                 del vals[i]
                 continue
 
-            if (vals[i] <= shortestVal):
+            if (vals[i] <= shortestVal and (self.notes[i] is not type(list) or len(self.notes[i]) > 0)):
                 shortestVal = vals[i]
 
             i += 1
@@ -141,41 +149,35 @@ class Note:
 # Map of note and corresponding half-step movement
 class Position(Enum):
     
-    def __new__(cls, *args, **kwds):
-        obj = object.__new__(cls)
-        obj._value_ = args[0]
-        return obj
-    
-    def __init__(self, halfsteps, name):
-        self.halfsteps = halfsteps
-        self.name = name
-    
     D = -7, "d"
-    D_SHARP = -6, "ds"
+    D_SHARP = -6, "dis"
     E = -5, "e"
     F = -4, "f"
-    F_SHARP = -3, "fs"
+    F_SHARP = -3, "fis"
     G = -2, "g"
-    G_SHARP = -1, "gs"
-    A = 0, "a'"
-    A_SHARP = 1, "as'"
-    B = 2, "b'"
+    G_SHARP = -1, "gis"
+    A = 0, "a"
+    A_SHARP = 1, "ais"
+    B = 2, "b"
     C = 3, "c'"
-    C_SHARP = 4, "cs'"
+    C_SHARP = 4, "cis'"
     D2 = 5, "d'"
+    
+    def __init__(self, halfsteps: int = None, name: str = None):
+        self._halfsteps_ = halfsteps
+        self._name_ = name
+    
+    @property
+    def halfsteps(self):
+        return self._halfsteps_
+    
+    @property
+    def name(self):
+        return self._name_
 
 # Octaves enum
 # Map of octave and corresponding A frequency
 class Octave(Enum):
-    
-    def __new__(cls, *args, **kwds):
-        obj = object.__new__(cls)
-        obj._value_ = args[0]
-        return obj
-    
-    def __init__(self, frequency, num):
-        self.frequency = frequency
-        self.num = num
     
     ZERO = 27.50, 0
     ONE = 55.00, 1
@@ -186,3 +188,15 @@ class Octave(Enum):
     SIX = 1760.00, 6
     SEVEN = 3520.00, 7
     EIGHT = 7040.00, 8
+    
+    def __init__(self, frequency: int = None, num: int = None):
+        self._frequency_ = frequency
+        self._num_ = num
+        
+    @property
+    def frequency(self):
+        return self._frequency_
+    
+    @property
+    def num(self):
+        return self._num_

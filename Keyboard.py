@@ -47,7 +47,12 @@ class Keyboard:
             while (self.keyboard.isPlaying):
                 self.play()
                 time.sleep(self.pause)
-
+                
+            # Loop through all pressed keys and stop playing
+            for speaker in keyboardData.speakers:
+                self.keyboard.pig.hardware_PWM(speaker.getPin(), 0, 0)
+            keyboardData.pressedKeys.clear()
+            
             # Calls stop event
             for oList in self.keyboard.listeners.copy():
                 for l in oList:
@@ -59,17 +64,13 @@ class Keyboard:
             keyboardData = self.keyboard.data
             
             # Loop through all pressed keys and stop playing
-            for i in range(len(keyboardData.pressedKeys)):
-                self.keyboard.pig.hardware_PWM(
-                    keyboardData.speakers[i].getPin(),
-                    0,
-                    0
-                )
+            for speaker in keyboardData.speakers:
+                self.keyboard.pig.hardware_PWM(speaker.getPin(), 0, 0)
             keyboardData.pressedKeys.clear()
 
             # Loop through all keys in keyboard data and check which are pressed
             for key in keyboardData.keys:
-                if (len(keyboardData.pressedKeys) >= len(keyboardData.speakers)):
+                if (len(keyboardData.pressedKeys) >= len(keyboardData.speakers)*Speaker.NOTES_PER_SPEAKER):
                     break
                 if(key.isPressed()):
                     keyboardData.pressedKeys.append(key)
@@ -82,7 +83,7 @@ class Keyboard:
             # Loop through all pressed keys and play corresponding frequency
             for i in range(len(keyboardData.pressedKeys)):
                 self.keyboard.pig.hardware_PWM(
-                    keyboardData.speakers[i].getPin(),
+                    keyboardData.speakers[int(i/Speaker.NOTES_PER_SPEAKER)].getPin(),
                     int(keyboardData.pressedKeys[i].getNote().getFrequency()),
                     int(0.25e6)
                 )
@@ -114,6 +115,7 @@ class Keyboard:
 
     def __setup(self):
         GPIO.setmode(GPIO.BCM)
+        GPIO.setwarnings(False)
 
     # Tell play thread to begin playing
     def play(self):
@@ -161,6 +163,9 @@ class Key:
 
 # Speaker class
 class Speaker:
+    
+    NOTES_PER_SPEAKER = 3
+    
     # Initialize with pin
     def __init__(self, pin):
         self.pin = pin

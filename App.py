@@ -3,11 +3,8 @@ import Keyboard
 import KeyPlayback
 import KeyHelper
 import Song
-from listeners import KeyRecord
-from listeners import OctaveSetter
+from listeners import KeyRecord, OctaveSetter
 
-# TODO add keys/speakers
-# Set keys
 keys = [
     Keyboard.Key(20, Song.Note(Song.Position.D, Song.Octave.THREE)),
     Keyboard.Key(21, Song.Note(Song.Position.D_SHARP, Song.Octave.THREE)),
@@ -30,9 +27,8 @@ speakers = [
 ]
 
 # Initialize components
-recorder = KeyRecord.KeyRecord()
+recorder = KeyRecord.KeyRecord(pin = 4)
 playback = KeyPlayback.KeyPlayback(speakers)
-# keyHelper = KeyHelper.KeyHelper(keys)
 
 # Initialize keyboard and add its listeners
 keyboard = Keyboard.Keyboard(keys, speakers)
@@ -42,21 +38,12 @@ keyboard.addListener(recorder, Keyboard.Listener.Order.LAST)
 # Play and record keyboard
 keyboard.play()
 recorder.record()
-time.sleep(3)
+time.sleep(10)
 recorder.stop()
 keyboard.stop()
 
+# Display recorded song on sheet music
+recorder.getSong().save(name = "test")
+
 # Playback recorded song
 playback.play(recorder.getSong())
-
-#time.sleep(2)
-
-# Play keyboard with key helper playing the recorded song
-#keyboard.play()
-#keyHelper.start(recorder.getSong())
-#keyboard.stop()
-
-#time.sleep(2)
-
-# Display recorded song on sheet music
-#recorder.getSong().display()
