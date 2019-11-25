@@ -9,46 +9,16 @@ def load(fileName):
         if( not os.path.exists("SONGS")):
             raise IOError("File not found")
         
-        file = open("SONGS/" + fileName, "r")
-        lines = file.readlines()
+        file = np.load("SONGS/" + str(fileName))
         
-        if(not lines[0] == "Lilypond Music\n"):
-            raise IOError(fileName + " is not a lilypond music file")
+        return Song(file[0], file[1])
         
-        file.close()
-        
-        notes = []
-        for noteList in lines[1][1:-2].split("-"):
-            cord = []
-            for rawCord in noteList[1:-1].split("_"):
-                if(rawCord == ''):
-                    continue
-                
-                raw = rawCord[1:-1].split(", ")
-                position = None
-                for p in Position:
-                    if(p.name == raw[0]):
-                        position = p
-                        break
-                octave = None
-                for o in Octave:
-                    if(o.num == int(raw[1])):
-                        octave = o
-                        break
-                cord.append(Note(position, octave))
-            notes.append(cord)
-        
-        durations = []
-        for duration in lines[2][1:-1].split(", "):
-            durations.append(float(duration))
-        
-        return Song(notes, durations)
 
 class Song:
 
     def __init__(self, notes = None, durations = None):
-        self.notes = [] if notes == None else notes
-        self.durations = [] if durations == None else durations
+        self.notes = [] if notes is None else notes
+        self.durations = [] if durations is None else durations
         self.sheetmusic = None
         
     def addNotes(self, note, duration):
@@ -63,25 +33,7 @@ class Song:
     def __saveSong__(self, name):
         if( not os.path.exists("SONGS")):
             os.makedirs("SONGS")
-        f = open("SONGS/" + name + ".song", "w")
-        f.write("Lilypond Music\n")
-        
-        notes = "["
-        for noteList in self.notes:
-            notes += "["
-            if (type(noteList) is list):
-                for note in noteList:
-                    notes += str(note) + "_"
-            else:
-                notes += str(note) + "_"
-            notes = notes[:-1]
-            notes += "]-"
-        notes = notes[:-1]
-        notes += "]"
-        
-        f.write(notes + "\n")
-        f.write(str(self.durations))
-        f.close()
+        np.save("SONGS/" + name + ".npy", np.array([self.notes, self.durations]))
     
     def __saveLily__(self, name):
         Thread(target = pb.runLilyPond, args = (self.getSheetMusic(), name)).start()

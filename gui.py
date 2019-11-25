@@ -10,53 +10,56 @@ bgButton = "ghost white"
 listeners = []
 
 def hitButton():
-	global currentMode
-	currentMode = v.get()
+    global currentMode
+    currentMode = v.get()
 
 def openREADME():
-	os.system("xdg-open README.md")
+    os.system("xdg-open README.md")
 
 def optionMenuValue(selection):
-	global playSong
-	playSong = str(selection)
+    global playSong
+    playSong = str(selection)
 
 def stopRecording():
-    musicFileNames.append(entry.get() + ".song")
+    musicFileNames.append(entry.get() + ".npy")
     for listener in listeners:
         listener.onStopEvent()
 
 def sendIt():
-	for listener in listeners:
-            listener.onSubmitEvent(
-		{
+    if(len(musicFileNames) == 1 and musicFileNames[0] == "NA" and currentMode == 3):
+        return
+    for listener in listeners:
+        listener.onSubmitEvent(
+            {
                     0: None,
                     1: Mode.FREEPLAY,
                     2: Mode.RECORD,
                     3: Mode.PLAYBACK,
                     4: Mode.MUTE
-		}[currentMode],
-		str(entry.get()),
-		str(playSong)
-            )
+            }[currentMode],
+            str(entry.get()),
+            musicFileNames[0] if playSong == "" else playSong 
+        )
 
 def addListener(listener):
-	listeners.append(listener)
+    listeners.append(listener)
 
 def delListener(listener):
-	listeners.remove(listener)
+    listeners.remove(listener)
 
 def getDirNames():
-	global musicFileNames
-	cv = []
+    global musicFileNames
+    cv = []
 
-	for root, dirs, files in os.walk("."):
-		for filename in files:
-			cv.append(filename)
+    for root, dirs, files in os.walk("."):
+        for filename in files:
+            cv.append(filename)
 
-	fileType = ".song"
-	for i in range(len(cv)):
-		if(cv[i][-5:] == fileType):
-			musicFileNames.append(cv[i])
+    fileType = ".npy"
+    fileTypeSize = len(fileType)*(-1)
+    for i in range(len(cv)):
+        if(cv[i][fileTypeSize:] == fileType):
+            musicFileNames.append(cv[i])
 
 def start():
     root.mainloop()
@@ -67,12 +70,14 @@ class Mode(Enum):
     PLAYBACK = 3,
     MUTE = 4
 
-root = Tk() 
-v = IntVar()
-
 musicFileNames = []
 currentMode = 0
 playSong = ""
+
+getDirNames()
+
+root = Tk() 
+v = IntVar()
 
 root.title('RaspPI Keyboard')
 root.configure(background=bgColor)
@@ -100,10 +105,8 @@ modeThreeLabel = Label(root, text='Play Song', bg='lightblue').pack(fill=tk.BOTH
 
 variable = StringVar(root)
 
-getDirNames()
-
 if(len(musicFileNames) == 0):
-	musicFileNames.append("NA")
+    musicFileNames.append("NA")
 
 variable.set(musicFileNames[0])
 w = OptionMenu(root, variable, *musicFileNames, command=optionMenuValue)

@@ -2,7 +2,7 @@
 - Date: Fall 2019
 
 ## Creators & Roles:
-- Andrew Darling - Wrote the Object-Orient-Programming structure for the code.
+- Andrew Darling - Wrote the Object-Orient-Programming structure and logic for the code.
 - Riley Royall - Built the circuit for RPBP.
 - Mehmet Yilmaz - Wrote the GUI element and the sheet music generator for the code.
 
