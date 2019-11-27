@@ -4,10 +4,12 @@ import pigpio
 
 class KeyPlayback(Keyboard.Listener):
 
+    # Initialize keyplayback object
     def __init__(self, speakers):
         self.speakers = speakers
         self.pig = pigpio.pi(port = 8887)
-    
+
+    # Play song
     def play(self, song):
         notes = song.getNotes().copy()
         durs = song.getDurations().copy()

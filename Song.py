@@ -5,6 +5,7 @@ import pb
 import sys
 import os
 
+# Load song file from SONGS folder
 def load(fileName):
         if( not os.path.exists("SONGS")):
             raise IOError("File not found")
@@ -12,32 +13,36 @@ def load(fileName):
         file = np.load("SONGS/" + str(fileName))
         
         return Song(file[0], file[1])
-        
 
 class Song:
 
+    # Initialize song object
     def __init__(self, notes = None, durations = None):
         self.notes = [] if notes is None else notes
         self.durations = [] if durations is None else durations
         self.sheetmusic = None
-        
+
+    # Add notes to song
     def addNotes(self, note, duration):
         self.notes.append(note)
         self.durations.append(duration)
 
+    # Save song
     def save(self, name="song"):
         self.__saveSong__(name)
         self.__saveLily__(name)
         
-    
+    # Save song to npy file
     def __saveSong__(self, name):
         if( not os.path.exists("SONGS")):
             os.makedirs("SONGS")
         np.save("SONGS/" + name + ".npy", np.array([self.notes, self.durations]))
-    
+
+    # Save song as a lilypond file
     def __saveLily__(self, name):
         Thread(target = pb.runLilyPond, args = (self.getSheetMusic(), name)).start()
-    
+
+    # Optimize the song size
     def optimize(self):
         i = 0
         while(True):
@@ -49,22 +54,27 @@ class Song:
             self.durations[i-1] += self.durations[i]
             del self.notes[i]
             del self.durations[i]
-            
+
+    # Get song notes
     def getNotes(self):
         return self.notes
-    
+
+    # Get song duration
     def getDurations(self):
         return self.durations
-    
+
+    # Get sheet music (as a string)
     def getSheetMusic(self, accuracy = 0.2):
         if(self.sheetmusic == None):
             self.updateSheetMusic(accuracy)
         return self.sheetmusic
-    
+
+    # Update sheet music
     def updateSheetMusic(self, accuracy = 0.2):
-        self.sheetmusic = self.__generateSheetMusic(accuracy)
-    
-    def __generateSheetMusic(self, accuracy):
+        self.sheetmusic = self.__generateSheetMusic__(accuracy)
+
+    # Generate sheet music
+    def __generateSheetMusic__(self, accuracy):
         self.optimize()
 
         durs = self.durations.copy()
@@ -72,18 +82,18 @@ class Song:
         for i in range(len(durs)):
             durs[i] = round(durs[i]/shortestDur)
 
-        lowestOctave = self.__findLowestOctave()
+        lowestOctave = self.__findLowestOctave__()
 
         sheetmusic = ""
         for i in range(len(durs)):
-            note = self.__generateCord(self.notes[i], lowestOctave)
-            durations = self.__generateDurations(durs[i])
+            note = self.__generateCord__(self.notes[i], lowestOctave)
+            durations = self.__convertDuration__(durs[i])
             for dur in durations:
                 sheetmusic += note + str(dur) + " "
                 
         return sheetmusic
 
-    def __findLowestOctave(self):
+    def __findLowestOctave__(self):
         lowestOctave = Octave.EIGHT
         for note in self.notes:
             if (type(note) is list):
@@ -94,7 +104,7 @@ class Song:
                 lowestOctave = note.getOctave()
         return lowestOctave
 
-    def __generateCord(self, note, lowestOctave):
+    def __generateCord__(self, note, lowestOctave):
         if(not (type(note) is list)):
             return note.getPosition().name + ("'" * (note.getOctave().num + 1 - lowestOctave.num))
         if(len(note) == 0):
@@ -105,7 +115,8 @@ class Song:
         cord += ">"
         return cord
 
-    def __generateDurations(self, time):
+    # Convert time duration to note duration
+    def __convertDuration__(self, time):
         durations = []
 
         while (time >= 4):
@@ -201,7 +212,6 @@ class Position(Enum):
         return self._name_
 
 # Octaves enum
-# Map of octave and corresponding A frequency
 class Octave(Enum):
     
     ZERO = 27.50, 0
