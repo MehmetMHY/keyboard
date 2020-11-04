@@ -13,13 +13,15 @@
 Our project is a Raspberry Pi Buzzer Piano (RPBP). This RPBP idea is a musical keyboard which would have a set of 13 keys, where the keys are just buttons, that can act like Piano keys. When a key is pressed, it would cause one or more of the buzzers to buzz at different frequencies depending on which button is pressed. There will also be two potentiometers, were one of them will be used to change between the 3 modes of the RPBP and the second is used to change the octave(s) of the buzzers. The 3 modes on the RPBP is: Free-Play, Record, and Play-Back. Free-Play, allows the user to play the RPBP and just hear what key they hit. Record, allows the user to Free-Play the RPBP well at the same time record it into a npy file as well as create Sheet Music, in PDF form, for that recording. Play-Back allows the user to enter a recorded file name and the circuit will play that recorded file though the buzzers. All the Sheet Music will be saved to one directory, so the user can always look back at their Sheet Musics if they desire to do so. Each button/key has an LED to show the user when a button/key has be pressed.
 
 ## Requirements:
-- LilyPond
-- Python 3
-- Debian
-- NumPy
-- Bash
-- Raspberry Pi B 3+
-- "the overall circuit - look at circuit/ directory"
+- LilyPond [[link](http://lilypond.org/text-input.html)]
+- Python3 [[link](https://www.python.org/downloads/)]
+- Raspberry Pi B 3+ [[link](https://www.raspberrypi.org/products/raspberry-pi-3-model-b-plus/?resellerType=home)]
+- Raspberry Pi OS:
+	- ISO: [[link](https://www.raspberrypi.org/downloads/)]
+	- Make LillyPond Work With ARM (Raspberry Pi): [[link](http://partitura.org/index.php/lilypond/)]
+- NumPy [[link](https://numpy.org/install/)]
+- Bash [[link](https://www.gnu.org/software/bash/)]
+- Main Circuit [[link](https://github.com/MehmetMHY/keyboard/tree/master/circuit)]
 
 ## Information:
 ### Modes:
