@@ -1,6 +1,9 @@
 # CSCI Capstone Project - RaspPi Keyboard (RPBP)
 - Date: Fall 2019
 
+<img width="180" alt="GUI_image" src="https://user-images.githubusercontent.com/15916367/98157166-2800c980-1e96-11eb-9af1-1fa7aff8a471.png">
+
+
 ## Creators & Roles:
 - Andrew Darling - Wrote the Object-Orient-Programming structure and logic for the code.
 - Riley Royall - Built the circuit for RPBP.
@@ -16,7 +19,7 @@ Our project is a Raspberry Pi Buzzer Piano (RPBP). This RPBP idea is a musical k
 - NumPy
 - Bash
 - Raspberry Pi B 3+
-- "the overall circuit"
+- "the overall circuit - look at circuit/ directory"
 
 ## Information:
 ### Modes:
