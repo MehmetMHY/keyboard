@@ -121,3 +121,5 @@ stopRC = tk.Button(root, text='Stop', width=25, command=stopRecording, highlight
 
 leaveLabel = Label(root, text='Close Program', bg='red').pack(fill=tk.BOTH)
 exit = tk.Button(root, text='Exit', width=25, command=root.destroy, highlightbackground=bgColor, bg=bgButton).pack() 
+
+root.mainloop()
