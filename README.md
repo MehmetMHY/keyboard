@@ -3,14 +3,13 @@
 
 <img width="180" alt="GUI_image" src="https://user-images.githubusercontent.com/15916367/98157166-2800c980-1e96-11eb-9af1-1fa7aff8a471.png">
 
-
 ## Creators & Roles:
 - Andrew Darling - Wrote the Object-Orient-Programming structure and logic for the code.
 - Riley Royall - Built the circuit for RPBP.
 - Mehmet Yilmaz - Wrote the GUI element and the sheet music generator for the code.
 
 ## RPK Description:
-Our project is a Raspberry Pi Buzzer Piano (RPBP). This RPBP idea is a musical keyboard which would have a set of 13 keys, where the keys are just buttons, that can act like Piano keys. When a key is pressed, it would cause one or more of the buzzers to buzz at different frequencies depending on which button is pressed. There will also be two potentiometers, were one of them will be used to change between the 3 modes of the RPBP and the second is used to change the octave(s) of the buzzers. The 3 modes on the RPBP is: Free-Play, Record, and Play-Back. Free-Play, allows the user to play the RPBP and just hear what key they hit. Record, allows the user to Free-Play the RPBP well at the same time record it into a npy file as well as create Sheet Music, in PDF form, for that recording. Play-Back allows the user to enter a recorded file name and the circuit will play that recorded file though the buzzers. All the Sheet Music will be saved to one directory, so the user can always look back at their Sheet Musics if they desire to do so. Each button/key has an LED to show the user when a button/key has be pressed.
+Our project is a Raspberry Pi Buzzer Piano (RPBP). This RPBP idea is a musical keyboard which would have a set of 13 keys, where the keys are just buttons, that can act like Piano keys. When a key is pressed, it would cause one or more of the buzzers to buzz at different frequencies depending on which button is pressed. There will also be two potentiometers, were one of them will be used to change between the 3 modes of the RPBP and the second is used to change the octave(s) of the buzzers. The 3 modes on the RPBP is: Free-Play, Record, and Play-Back. Free-Play, allows the user to play the RPBP and just hear what key they hit. Record, allows the user to Free-Play the RPBP well at the same time record it into a npy file as well as create Sheet Music, in PDF form, for that recording. Play-Back allows the user to enter a recorded file name and the circuit will play that recorded file though the buzzers. All the Sheet Music will be saved to one directory, so the user can always look back at their Sheet Musics if they desire to do so. Each button/key has an LED to show the user when a button/key has be pressed. This project has only been proven to work on Rasbian (Raspberry Pi OS) with the requirements, shown below, setup properly.
 
 ## Requirements:
 - LilyPond [[link](http://lilypond.org/text-input.html)]
@@ -50,5 +49,8 @@ Our project is a Raspberry Pi Buzzer Piano (RPBP). This RPBP idea is a musical k
 - [ these steps are for those who select the "Mute" mode ]
 -- Third_40, Just hit the Submit button and all the Buzzers will be mutes until you change to a different mode
 - Fourth, after you are all done with the RPBP, hit the Exit button to close the GUI and the overall program
+
+
+
 
 
