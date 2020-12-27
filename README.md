@@ -33,6 +33,12 @@ Our project is a Raspberry Pi Buzzer Piano (RPBP). This RPBP idea is a musical k
 ### Other Notes:
 - To learn more about RPBP from the GUI, hit the README button and this README will open up. 
 
+## Main Circuit
+![circuit_layout](https://user-images.githubusercontent.com/15916367/103166572-a61b8580-47e0-11eb-8a56-a44db605b634.jpeg)
+- The [Pi Wedge](https://www.sparkfun.com/products/13717) is connected to a Raspberry Pi 3 B+ though a ribbon cable. 
+- The Raspberry Pi runs the code provided in this repo with the drivers listed in this README.
+- Sorry for the circuit layout being so messy, sadly we did not document this part too well.
+
 ## How To Use:
 - First, make sure all the requirements are met then execute the start.sh bash script and a GUI appear.
 - Second, Select what Mode you want to use under the "Modes" label.
@@ -49,8 +55,5 @@ Our project is a Raspberry Pi Buzzer Piano (RPBP). This RPBP idea is a musical k
 - [ these steps are for those who select the "Mute" mode ]
 -- Third_40, Just hit the Submit button and all the Buzzers will be mutes until you change to a different mode
 - Fourth, after you are all done with the RPBP, hit the Exit button to close the GUI and the overall program
-
-
-
 
 
